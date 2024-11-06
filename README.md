@@ -73,8 +73,7 @@ Find me on [LinkedIn](https://www.linkedin.com/in/moustafa-gabil-8a4a6bab/) for 
     ```
     pip install -r requirements.txt
     ```
-```
-```
+  ```
 ## ➡️ 🔄 ➡️ pipeline for excuting the files: 
 
 **Notes**
@@ -118,10 +117,10 @@ Find me on [LinkedIn](https://www.linkedin.com/in/moustafa-gabil-8a4a6bab/) for 
 ## Results: 
 There are more results available for testing the models and visualization can be found in folders such as:
 
-1. Heat maps: where you can find the correlation between the price and different featuresas indicated in the below figure.
+1. Heat_maps: where you can find the  as indicated in the below figure.
 <p align="center">
 
-  ![correlation between the price and different featuresas](https://github.com/user-attachments/assets/31069c2d-62c7-4522-877e-852e2adad744)
+  <![Correlation between the price and different features by using Houses & Apartments data](./assets/heatmap_Houses_and_Apartments_combined_without_outliers.png) />
 </p>
 
 2. Evaluation table for different models and differnt properties combinations as follow:
@@ -147,8 +146,7 @@ There are more results available for testing the models and visualization can be
 3.  The some of the feature importance results can found below: </b>
 <p align="center">
 
-  ![Feature importance results](https://github.com/user-attachments/assets/f1519277-eab2-43e2-8a09-47f809560e7e)
-
+  <![The some of the feature importance results](<./assets/only lan and lon.png>) />
 </p>
 
 4. The models after training and testing is saved in the "models" folder to use them later
