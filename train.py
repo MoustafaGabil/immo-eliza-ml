@@ -188,7 +188,7 @@ def heat_map(data, title, save_path=None):
 
 
 # Processing each CSV file
-directory = r"C:\Users\mgabi\Desktop\becode\becode_projects\immo-eliza-ml\Preproc_ML"
+directory = r"Results and Evaluation"
 all_results = []
 
 for file_name in os.listdir(directory):
@@ -203,7 +203,7 @@ for file_name in os.listdir(directory):
         heat_map(
             dataset,
             title=f"Correlation map for {file_name_no_ext}",
-            save_path=f"Heat_maps\heatmap_{file_name_no_ext}.png",
+            save_path=f"Results and Evaluation\Heat_maps\heatmap_{file_name_no_ext}.png",
         )
 
         X = dataset[parameters + locality_encoded_columns]
@@ -241,9 +241,7 @@ for file_name in os.listdir(directory):
         }
 
         # Specify the directory where you want to save the models
-        model_save_directory = (
-            r"C:\Users\mgabi\Desktop\becode\becode_projects\immo-eliza-ml\models"
-        )
+        model_save_directory = r"Results and Evaluation\models"
 
         # looping Inside  model evaluation , saving the models
         for name, model in models.items():
@@ -268,6 +266,6 @@ final_results_df = final_results_df[column_order]
 print(final_results_df)
 
 final_results_df.to_csv(
-    r"C:\Users\mgabi\Desktop\becode\becode_projects\immo-eliza-ml\Preproc_ML\Evaluation_results\combined_model_evaluation_results.csv",
+    r"Results and Evaluation\Evaluation_results\combined_model_evaluation_results.csv",
     index=False,
 )

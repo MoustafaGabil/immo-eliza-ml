@@ -64,7 +64,7 @@ def cleaning_data(data):
     print(f"Total rows after cleaning: {len(data_cleaned_final)}")
     # Saving the cleaned file in the choesen path.
     data_cleaned_final.to_csv(
-        r"C:\Users\mgabi\Desktop\becode\becode_projects\immo-eliza-ml\Cleaning\properties_cleaned.csv",
+        r"Cleaning\properties_cleaned.csv",
         index=False,
     )
     return data_cleaned_final
