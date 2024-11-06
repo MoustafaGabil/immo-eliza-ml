@@ -120,7 +120,7 @@ There are more results available for testing the models and visualization can be
 1. Heat_maps: where you can find the  as indicated in the below figure.
 <p align="center">
 
-  <![Correlation between the price and different features by using Houses & Apartments data](./assets/heatmap_Houses_and_Apartments_combined_without_outliers.png) />
+  ![Correlation between the price and different features by using Houses & Apartments data](./assets/heatmap_Houses_and_Apartments_combined_without_outliers.png) 
 </p>
 
 2. Evaluation table for different models and differnt properties combinations as follow:
@@ -129,13 +129,13 @@ There are more results available for testing the models and visualization can be
 |--------------------------------------------------|------------------------------------|-------------|-------------|--------------|-------------|-----------|
 | APARTMENT_without_outliers                       | Random Forest Regression           | 38847.567   | 197.098     | 0.7462       | 0.9210      | 0.7462    |
 | APARTMENT_without_outliers                       | XGB Regression                     | 31681.849   | 177.994     | 0.8163       | 0.9865      | 0.8163    |
-| APARTMENT_without_outliers.csv                   | Hist Gradient Boosting Regression  | 34233.048   | 185.022     | 0.7970       | 0.9134      | 0.7970    |
+| APARTMENT_without_outliers                       | Hist Gradient Boosting Regression  | 34233.048   | 185.022     | 0.7970       | 0.9134      | 0.7970    |
 | Houses_and_Apartments_combined_without_outliers  | Random Forest Regression           | 47965.068   | 219.010     | 0.7684       | 0.9216      | 0.7684    |
 | Houses_and_Apartments_combined_without_outliers  | XGB Regression                     | 41086.616   | 202.698     | 0.8175       | 0.9806      | 0.8175    |
 | Houses_and_Apartments_combined_without_outliers  | Hist Gradient Boosting Regression  | 46254.587   | 215.069     | 0.7912       | 0.8678      | 0.7912    |
 | HOUSE_without_outliers                           | Random Forest Regression           | 58860.515   | 242.612     | 0.7651       | 0.9210      | 0.7651    |
 | HOUSE_without_outliers                           | XGB Regression                     | 50102.966   | 223.837     | 0.8162       | 0.9937      | 0.8162    |
-| HOUSE_without_outliers.csv                       | Hist Gradient Boosting Regression  | 53392.923   | 231.069     | 0.8018       | 0.9124      | 0.8018    |
+| HOUSE_without_outliers                           | Hist Gradient Boosting Regression  | 53392.923   | 231.069     | 0.8018       | 0.9124      | 0.8018    |
 
 **where**
 
@@ -146,7 +146,7 @@ There are more results available for testing the models and visualization can be
 3.  The some of the feature importance results can found below: </b>
 <p align="center">
 
-  <![The some of the feature importance results](<./assets/only lan and lon.png>) />
+  ![The some of the feature importance results](<./assets/only lan and lon.png>) 
 </p>
 
 4. The models after training and testing is saved in the "models" folder to use them later
