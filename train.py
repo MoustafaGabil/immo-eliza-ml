@@ -9,6 +9,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
+import joblib
 
 # Constants
 parameters = [
@@ -44,8 +45,8 @@ Heat_map_parmeters = [
     "zip_code",
 ]
 
-
-# Define cleaning function
+# ------------------------------------------------  Feature Engineering ---------------------------------------
+#drop rows if they are empty for the below columns
 def cleaning(dataset):
     dataset.dropna(
         subset=[
@@ -59,31 +60,19 @@ def cleaning(dataset):
         ],
         inplace=True,
     )
+    # droping the property if it has 0 bed rooms as it is not logic 
     dataset = dataset[dataset["nbr_bedrooms"] != 0]
-    dataset["construction_year"] = dataset["construction_year"].fillna(
-        dataset["construction_year"].mode()[0]  # using mode gives the best results
-    )
-    dataset["nbr_bedrooms"] = dataset["nbr_bedrooms"].fillna(
-        dataset["nbr_bedrooms"].mean()
-    )
-    dataset["equipped_kitchen"] = (
-        dataset["equipped_kitchen"].replace(0, "unknown").fillna("unknown")
-    )
-    dataset["state_building"] = (
-        dataset["state_building"]
-        .replace(0, "unknown")
-        .fillna("unknown")  # replacing 0s and missing values with "unknown"
-    )
-    dataset["nbr_frontages"] = dataset["nbr_frontages"].fillna(
-        dataset["nbr_frontages"].median()
-    )
-    dataset["epc"] = dataset["epc"].fillna(dataset["epc"].mode()[0])
-    dataset["garden_sqm"] = dataset["garden_sqm"].fillna(dataset["garden_sqm"].mean())
-    dataset["surface_land_sqm"] = dataset["surface_land_sqm"].fillna(
-        dataset["surface_land_sqm"].median()
-    )
+    dataset["construction_year"] = dataset["construction_year"].fillna(dataset["construction_year"].mode()[0])  # using mode gives the best results based on the corellation with the price
+    dataset["nbr_bedrooms"] = dataset["nbr_bedrooms"].fillna(dataset["nbr_bedrooms"].mean()) # using mean gives the best results based on the corellation with the price
+    dataset["equipped_kitchen"] = (dataset["equipped_kitchen"].replace(0, "unknown").fillna("unknown")) # replacing 0s and missing values with "unknown"
+    dataset["state_building"] = (dataset["state_building"].replace(0, "unknown").fillna("unknown"))  # replacing 0s and missing values with "unknown"
+    dataset["nbr_frontages"] = dataset["nbr_frontages"].fillna(dataset["nbr_frontages"].median()) # using median gives the best results based on the corellation with the price
+    dataset["epc"] = dataset["epc"].fillna(dataset["epc"].mode()[0]) # using mode gives the best results based on the corellation with the price
+    dataset["garden_sqm"] = dataset["garden_sqm"].fillna(dataset["garden_sqm"].mean()) # using mean gives the best results based on the corellation with the price
+    dataset["surface_land_sqm"] = dataset["surface_land_sqm"].fillna(dataset["surface_land_sqm"].median()) # using median gives the best results based on the corellation with the price
     return dataset
 
+#----------------------------------------------------- Encoding -----------------------------------------------
 
 # Define encoding function It has to be ascending ordered.
 def encoding(dataset):
@@ -107,32 +96,31 @@ def encoding(dataset):
         "JUST_RENOVATED",
         "AS_NEW",
     ]
-    epc_order = ["G", "F", "E", "D", "C", "B", "A", "A+", "A++"]
-
-    encoder_kit = OrdinalEncoder(
-        categories=[kitchen_order]
-    )  # using Ordinal Encoder for encoding the categorical variables
+    epc_order = ['G','F','E','D','C','B','A','A+','A++']  
+    # using Ordinal Encoder for encoding the categorical variables
+    encoder_kit = OrdinalEncoder(categories=[kitchen_order])  
     encoder_bul = OrdinalEncoder(categories=[building_con_order])
     encoder_epc = OrdinalEncoder(categories=[epc_order])
 
-    dataset["kitchen_type_encoded"] = encoder_kit.fit_transform(
-        dataset[["equipped_kitchen"]]
-    )
-    dataset["Bulding_sta_encoded"] = encoder_bul.fit_transform(
-        dataset[["state_building"]]
-    )
+    dataset["kitchen_type_encoded"] = encoder_kit.fit_transform(dataset[["equipped_kitchen"]]) 
+    dataset["Bulding_sta_encoded"] = encoder_bul.fit_transform(dataset[["state_building"]])
     dataset["epc_encoded"] = encoder_epc.fit_transform(dataset[["epc"]])
 
-    locality_encoder = OneHotEncoder(sparse_output=False, drop="first")
-    locality_encoded = locality_encoder.fit_transform(dataset[["locality"]])
-    locality_encoded_df = pd.DataFrame(
-        locality_encoded, columns=locality_encoder.get_feature_names_out(["locality"])
-    )
+    joblib.dump(encoder_kit, "Results and Evaluation\Encoders\encoder_kitchen_type.joblib")
+    joblib.dump(encoder_bul, "Results and Evaluation\Encoders\encoder_building_state.joblib")
+    joblib.dump(encoder_epc, "Results and Evaluation\Encoders\encoder_epc.joblib")
 
-    dataset = pd.concat(
-        [dataset.reset_index(drop=True), locality_encoded_df.reset_index(drop=True)],
-        axis=1,
-    )
+    locality_encoder = OneHotEncoder(sparse_output=False, drop="first")  
+     # sparse_output=False to avoid creating sparse matrix but will creat dense array (a regular 2D numpy array or DataFrame).
+     #Drops the first category for each feature to avoid multicollinearity 
+     #If you encode all categories, one category can be perfectly predicted from the others, introducing redundancy
+    locality_encoded = locality_encoder.fit_transform(dataset[["locality"]])
+    #The function get_feature_names_out(["locality"]) creates a list of column's names based on the input column.
+    locality_encoded_df = pd.DataFrame(locality_encoded, columns=locality_encoder.get_feature_names_out(["locality"])) 
+    #drop=True: Prevents the old index from being added as a new column and avioid Misalignment as the new DF for the encoded locality has its own indeces (new) might not be the same as the dataset index.
+    dataset = pd.concat([dataset.reset_index(drop=True), locality_encoded_df.reset_index(drop=True)],axis=1,)
+    # Save the encoder using joblib (this will save the encoding process for later use)
+    joblib.dump(locality_encoder, "Results and Evaluation\Encoders\locality_encoder.joblib")
     return dataset, locality_encoded_df.columns.tolist()
 
 
@@ -142,7 +130,6 @@ def evaluate_models(X_train, X_test, y_train, y_test, models):
     for name, model in models.items():
         model.fit(X_train, y_train)
         predictions = model.predict(X_test)
-
         train_score = model.score(X_train, y_train)
         test_score = model.score(X_test, y_test)
         mae = mean_absolute_error(y_test, predictions)
@@ -158,11 +145,11 @@ def evaluate_models(X_train, X_test, y_train, y_test, models):
             "RMSE": rmse,
         }
 
-    results_df = pd.DataFrame(results).T
-    return results_df
+    results_evaluation = pd.DataFrame(results).T 
+    return results_evaluation
 
 
-# Define heatmap function with saving option
+# Heat map function and saving
 def heat_map(data, title, save_path=None):
     selected_parameters = data[Heat_map_parmeters]
     correlation_matrix = selected_parameters.corr()
@@ -199,18 +186,13 @@ for file_name in os.listdir(directory):
         dataset = pd.read_csv(file_path)
         dataset, locality_encoded_columns = encoding(cleaning(dataset))
 
-        file_name_no_ext = os.path.splitext(file_name)[0]
-        heat_map(
-            dataset,
-            title=f"Correlation map for {file_name_no_ext}",
-            save_path=f"Results and Evaluation\Heat_maps\heatmap_{file_name_no_ext}.png",
-        )
+        file_name_no_ext = os.path.splitext(file_name)[0] # using splitext to extract only the name which will have index [0] and avoid includind the extention .csv
+        heat_map(dataset,title=f"Correlation map for {file_name_no_ext}",
+            save_path=f"Results and Evaluation\Heat_maps\heatmap_{file_name_no_ext}.png",)
 
         X = dataset[parameters + locality_encoded_columns]
         y = dataset["price"]
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, random_state=42, test_size=0.2
-        )
+        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42, test_size=0.2)
 
         models = {
             "RandomForest Regression": RandomForestRegressor(
@@ -248,24 +230,19 @@ for file_name in os.listdir(directory):
             model.fit(X_train, y_train)
             predictions = model.predict(X_test)
 
-            # Saving
-            model_filename = os.path.join(
-                model_save_directory, f"{name.replace(' ', '_')}_{file_name_no_ext}.pkl"
-            )
+            # Saving the model
+            model_filename = os.path.join(model_save_directory, f"{name.replace(' ', '_')}_{file_name_no_ext}.pkl")
             with open(model_filename, "wb") as model_file:
                 pickle.dump(model, model_file)
                 print(f"Saved {name} model to {model_filename}")
 
-        results_df = evaluate_models(X_train, X_test, y_train, y_test, models)
-        results_df["File"] = file_name
-        all_results.append(results_df)
+        results_evaluation = evaluate_models(X_train, X_test, y_train, y_test, models)
+        results_evaluation["properties type"] = file_name_no_ext
+        all_results.append(results_evaluation)
 
-final_results_df = pd.concat(all_results)
-column_order = ["File", "Model name", "MAE", "RMSE", "R²", "Train Score", "Test Score"]
-final_results_df = final_results_df[column_order]
-print(final_results_df)
+final_results_evaluation = pd.concat(all_results)
+column_order = ["properties type", "Model name", "MAE", "RMSE", "R²", "Train Score", "Test Score"]
+final_results_evaluation = final_results_evaluation[column_order]
+print(final_results_evaluation)
 
-final_results_df.to_csv(
-    r"Results and Evaluation\Evaluation_results\combined_model_evaluation_results.csv",
-    index=False,
-)
+final_results_evaluation.to_csv(r"Results and Evaluation\Evaluation_results\combined_model_evaluation_results.csv",index=False,)

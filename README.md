@@ -39,7 +39,9 @@ Find me on [LinkedIn](https://www.linkedin.com/in/moustafa-gabil-8a4a6bab/) for 
 │      ├── Evaluation_results
 │      │     ├── combined_model_evaluation_results
 │      │     └──  comparasion of features results (with/without zip code,longitude and longitude)
-│      │     
+│      │
+│      ├── Encoders/ 
+│      │     └── Saved Encoders for the featrures that have been encoded (Localities, EPC, Kitchen type and Building statues)  
 │      ├── Features importance/
 │      │     └── Three graphs of important features for XGB_Regression model (with/without zip code,longitude and longitude) 
 │      │
@@ -56,6 +58,7 @@ Find me on [LinkedIn](https://www.linkedin.com/in/moustafa-gabil-8a4a6bab/) for 
 ├── cleaning and outliers removal.py 
 ├── .gitignore
 ├── train.py
+├── Prediction.py
 ├── README.md
 └── requirements.txt 
 
@@ -103,7 +106,7 @@ Find me on [LinkedIn](https://www.linkedin.com/in/moustafa-gabil-8a4a6bab/) for 
         )
 
         print("Data cleaning and outlier removal complete.")
-
+    ```
 3. Running the **train.py** which contains the script for preprocessing, feature engineering and testing of 3 different models (XGB_Regression,RandomForest,Hist_Gradient_Boosting).
     The following are the parameters used for model testing and creating heat/correlation maps.
      
@@ -111,7 +114,7 @@ Find me on [LinkedIn](https://www.linkedin.com/in/moustafa-gabil-8a4a6bab/) for 
         parameters = ["construction_year","total_area_sqm","nbr_frontages","nbr_bedrooms","kitchen_type_encoded","Bulding_sta_encoded","epc_encoded","garden_sqm","surface_land_sqm","fl_double_glazing","fl_terrace","fl_swimming_pool","fl_floodzone","latitude","longitude","zip_code",]
 
        Heat_map_parmeters = ["price","construction_year","total_area_sqm","nbr_frontages","nbr_bedrooms","kitchen_type_encoded","Bulding_sta_encoded","epc_encoded","garden_sqm","latitude","longitude","zip_code"]
-
+    ```
 4. The **Results and Evaluation** folder contains the results for different models and comparison based on using different features.
   ```
 ## Results: 
@@ -125,7 +128,7 @@ There are more results available for testing the models and visualization can be
 
 2. Evaluation table for different models and differnt properties combinations as follow:
 
-| File                                             | Model name                         | MAE         | RMSE        | R²           | Train Score | Test Score|
+| properties type                                  | Model name                         | MAE         | RMSE        | R²           | Train Score | Test Score|
 |--------------------------------------------------|------------------------------------|-------------|-------------|--------------|-------------|-----------|
 | APARTMENT_without_outliers                       | Random Forest Regression           | 38847.567   | 197.098     | 0.7462       | 0.9210      | 0.7462    |
 | APARTMENT_without_outliers                       | XGB Regression                     | 31681.849   | 177.994     | 0.8163       | 0.9865      | 0.8163    |
